@@ -4,11 +4,43 @@ from sklearn.preprocessing import StandardScaler
 import tkinter as tk
 import matplotlib.pyplot as plt
 from tkinter.font import Font
-
+import matplotlib.pyplot as plt
 
 filename = 'E:\cse 498r\svm.pkl'
 with open(filename, 'rb') as file:
     loaded_model = pickle.load(file)
+
+years=[]
+predictedValuations=[]
+
+def handlingModel():
+    duration=duration_entry.get()
+    operational_cost=operational_cost_entry.get()
+    total_fund=total_fund_entry.get()
+    revenue=revenue_entry.get()
+    profit=profit_entry.get()
+    net_profit_margin=nfm_entry.get()
+    userbase=user_base_entry.get()
+    daily_active_user=user_base_entry.get()
+
+    for i in range (int(duration),int(duration)+10,2):
+        data=[[i,operational_cost,total_fund,revenue,profit,net_profit_margin,userbase,daily_active_user]]
+        predictedValuation=loaded_model.predict(data)
+        predictedValuations.append(predictedValuation[0])
+        years.append(i)
+    
+    plt.plot(years,predictedValuations)
+
+    plt.xlabel('Years - X axis')
+    plt.ylabel('Valuations - Y axis')
+    plt.title("Predicted Company valuation through years")
+
+    plt.show()
+
+    print(predictedValuations)
+    
+
+        
 
 # Create the main window
 window = tk.Tk()
@@ -58,7 +90,7 @@ profit_entry = tk.Entry(center_frame, width=10, font=font)
 profit_entry.grid(row=4, column=1, padx=5, pady=5)
 entry_fields.append(profit_entry)
 
-nfm_label = tk.Label(center_frame, text=f"Net Profit Margin:", font=font, bg='sky blue')
+nfm_label = tk.Label(center_frame, text=f"Net Profit Margin (%):", font=font, bg='sky blue')
 nfm_label.grid(row=5, column=0, padx=5, pady=5, sticky='e')
 nfm_entry = tk.Entry(center_frame, width=10, font=font)
 nfm_entry.grid(row=5, column=1, padx=5, pady=5)
@@ -78,13 +110,11 @@ entry_fields.append(dau_entry)
 
 
 
-
-
 title_label = tk.Label(window, text="Generate Predictions for valuation of your Startup ", font=font, bg='sky blue')
 title_label.pack(pady=5)
 
 # Create a button to generate the graph
-generate_button = tk.Button(window, text="Generate Graph", font=font)
+generate_button = tk.Button(window, text="Predict", font=font,command=handlingModel)
 generate_button.pack(pady=10)
 
 # Start the GUI event loop
